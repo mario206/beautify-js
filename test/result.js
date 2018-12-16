@@ -174,7 +174,7 @@ function M(e, i) {
     console.time("queryAssets"), function (e, t) {
         var i = mod_sharebuild_platforms[s.platform].isNative;
         if (e) {
-            for (r = [], n = 0, o = e.length, void 0; n < o; n++) {
+            for (r = [], n = 0, o = e.length, undefined; n < o; n++) {
                 var r;
                 var n;
                 var o;
@@ -206,7 +206,7 @@ function M(e, i) {
             });
         } else console.time("queryMetas"), a.queryMetas("db://**/*", "", function (e, s) {
             console.timeEnd("queryMetas");
-            for (r = [], n = [], o = 0, l = s.length, void 0; o < l; o++) {
+            for (r = [], n = [], o = 0, l = s.length, undefined; o < l; o++) {
                 var r;
                 var n;
                 var o;
@@ -237,7 +237,7 @@ function M(e, i) {
             r || (i = e.assetTypes = []);
             var a = {};
             t = b.sortBy(t, "relative");
-            for (c = Object.create(null), u = 0, d = t.length, void 0; u < d; u++) {
+            for (c = Object.create(null), u = 0, d = t.length, undefined; u < d; u++) {
                 var c;
                 var u;
                 var d;
@@ -268,19 +268,19 @@ function M(e, i) {
                 j || (j = n[m] = {});
                 var h;
 
-                var v = cc.js._getClassId(p.ctor, !1);
+                var v = cc.js._getClassId(p.ctor, false);
 
                 if (!r) {
                     var w = a[v];
-                    void 0 === w && (i.push(v), w = i.length - 1, a[v] = w), v = w;
+                    undefined === w && (i.push(v), w = i.length - 1, a[v] = w), v = w;
                 }
                 var y = p.relative.slice("resources/".length);
                 h = p.isSubAsset ? [y, v, 1] : [y, v];
                 var _e2 = p.uuid;
-                o && (_e2 = l(_e2, !0)), j[_e2] = h;
+                o && (_e2 = l(_e2, true)), j[_e2] = h;
             }
         }(s, c), console.timeEnd("writeAssets"), function (e, t) {
-            for (i = [], s = 0, void 0; s < t.length; s++) {
+            for (i = [], s = 0, undefined; s < t.length; s++) {
                 var i;
                 var s;
                 var r = t[s];
@@ -292,7 +292,7 @@ function M(e, i) {
         }(s, u), e.sceneList.length > 0 && (s.launchScene = Editor.assetdb.uuidToUrl(e.sceneList[0])), function (e, t) {
             t = t.map(function (e) {
                 var t = Editor.assetdb.uuidToUrl(e);
-                return t ? (o && (e = l(e, !0)), { url: t, uuid: e }) : (Editor.warn("Can not get url of scene " + e + ", it maybe deleted."), null);
+                return t ? (o && (e = l(e, true)), { url: t, uuid: e }) : (Editor.warn("Can not get url of scene " + e + ", it maybe deleted."), null);
             }).filter(Boolean), e.scenes = t;
         }(s, e.sceneList), s.packedAssets = function (e) {
             if (o && e) {
@@ -300,13 +300,13 @@ function M(e, i) {
                 for (var i in e) {
                     var s = e[i];
                     t[i] = s.map(function (e) {
-                        return l(e, !0);
+                        return l(e, true);
                     });
                 }
                 e = t;
             }
             return e;
-        }(e.packedAssets) || {}, s.md5AssetsMap = {}, s.orientation = e.webOrientation, r && (s.debug = !0), s.subpackages = e.subpackages, s.server = e.server, (!("stringify" in e) || e.stringify) && (s = R(s, r)), i(null, s, n);
+        }(e.packedAssets) || {}, s.md5AssetsMap = {}, s.orientation = e.webOrientation, r && (s.debug = true), s.subpackages = e.subpackages, s.server = e.server, (!("stringify" in e) || e.stringify) && (s = R(s, r)), i(null, s, n);
     });
 }
 
@@ -328,7 +328,7 @@ exports.startWithArgs = function (t, S) {
                         case 0:
                             i = Editor.Utils.UuidUtils.getUuidFromLibPath, s = Editor.Utils.UuidUtils.compressUuid, n = [];
                             _context.next = 3;
-                            return r(mod_globby)(t, { nodir: !0 });
+                            return r(mod_globby)(t, { nodir: true });
 
                         case 3:
                             a = _context.sent;
@@ -341,7 +341,7 @@ exports.startWithArgs = function (t, S) {
                             }
 
                             l = a[c], u = i(mod_fire_path.relative(V, l));
-                            u ? n.push(s(u, !0), te(l).hash) : Editor.warn('Can not resolve uuid for path "' + l + '", skip the MD5 process on it.');
+                            u ? n.push(s(u, true), te(l).hash) : Editor.warn('Can not resolve uuid for path "' + l + '", skip the MD5 process on it.');
 
                         case 8:
                             ++c;
@@ -398,7 +398,7 @@ exports.startWithArgs = function (t, S) {
         tmplBase: mod_fire_path.resolve(Editor.url("unpack://static"), "build-templates"),
         jsCacheDir: Editor.url("unpack://engine/bin/.cache/" + $)
     };
-    var z = void 0;
+    var z = undefined;
     var Q;
     Object.assign(H, {
         template_shares: mod_fire_path.join(H.tmplBase, "shares/**/*"),
@@ -441,21 +441,21 @@ exports.startWithArgs = function (t, S) {
         }
 
         mod_electron_ipcMain.once("app:build-project-abort", s), mod_winston.normal("Start spawn build-worker");
-        var r = !1;
+        var r = false;
         Editor.App.spawnWorker("app://editor/page/build/build-worker", function (o, a) {
             var c;
-            mod_winston.normal("Finish spawn build-worker"), i = o, r || (r = !0, a.once("closed", function () {
+            mod_winston.normal("Finish spawn build-worker"), i = o, r || (r = true, a.once("closed", function () {
                 c || (mod_electron_ipcMain.removeListener("app:build-project-abort", s), Editor.log("Finish building assets"), e());
             })), mod_winston.normal("Start init build-worker"), Editor.Ipc.sendToMain("builder:state-changed", "init-worker", 0.32), i.send("app:init-build-worker", $, N, function (e) {
                 function s() {
                     !i || J || (i.close(), i = null);
                 }
 
-                e ? (A(e), c = !0, s()) : i && (mod_winston.normal("Finish init build-worker"), mod_winston.normal("Start build-assets in worker"), Editor.Ipc.sendToMain("builder:state-changed", "build-assets", 0.65), i.send("app:build-assets", H.res, $, N, b.pick(t, "scenes", "inlineSpriteFrames", "mergeStartScene", "optimizeHotUpdate", "wechatgame"), function (e, t, i) {
-                    e ? (A(e), c = !0) : t && (Q._buildAssets = t, Q._packedAssets = i), mod_winston.normal("Finish build-assets in worker"), s();
+                e ? (A(e), c = true, s()) : i && (mod_winston.normal("Finish init build-worker"), mod_winston.normal("Start build-assets in worker"), Editor.Ipc.sendToMain("builder:state-changed", "build-assets", 0.65), i.send("app:build-assets", H.res, $, N, b.pick(t, "scenes", "inlineSpriteFrames", "mergeStartScene", "optimizeHotUpdate", "wechatgame"), function (e, t, i) {
+                    e ? (A(e), c = true) : t && (Q._buildAssets = t, Q._packedAssets = i), mod_winston.normal("Finish build-assets in worker"), s();
                 }, -1));
             }, -1);
-        }, J, !0);
+        }, J, true);
     });
     var K = null;
     var X = null;
@@ -463,7 +463,7 @@ exports.startWithArgs = function (t, S) {
     C.task("build-settings", ["build-assets"], function (e) {
         var i = Editor.Profile.load("profile://project/project.json");
         var s = {
-            stringify: !1,
+            stringify: false,
             customSettings: {
                 platform: $,
                 groupList: i.data["group-list"],
@@ -534,7 +534,7 @@ exports.startWithArgs = function (t, S) {
             for (var _t4 in _n2) {
                 var r = _n2[_t4];
                 var _i3 = e[_t4];
-                void 0 !== _i3 && (_t4 = _i3), _o3[_t4] = r;
+                undefined !== _i3 && (_t4 = _i3), _o3[_t4] = r;
             }
         }
         var n = K.scenes;
@@ -542,14 +542,14 @@ exports.startWithArgs = function (t, S) {
             var _i4 = n[_t5];
             var _s2 = e[_i4.uuid];
 
-            void 0 !== _s2 && (_i4.uuid = _s2);
+            undefined !== _s2 && (_i4.uuid = _s2);
         }
         var o = K.packedAssets;
         for (var _t6 in o) {
             var _i5 = o[_t6];
             for (var _t7 = 0; _t7 < _i5.length; ++_t7) {
                 var _s3 = e[_i5[_t7]];
-                void 0 !== _s3 && (_i5[_t7] = _s3);
+                undefined !== _s3 && (_i5[_t7] = _s3);
             }
         }
         if (t.md5Cache) {
@@ -558,7 +558,7 @@ exports.startWithArgs = function (t, S) {
                 var _s4 = _t8[_i6];
                 for (var _t9 = 0; _t9 < _s4.length; _t9 += 2) {
                     var _i7 = e[_s4[_t9]];
-                    void 0 !== _i7 && (_s4[_t9] = _i7);
+                    undefined !== _i7 && (_s4[_t9] = _i7);
                 }
             }
             Z = function Z(e) {
@@ -566,7 +566,7 @@ exports.startWithArgs = function (t, S) {
                 var i = e.md5AssetsMap;
 
                 for (var s in i) {
-                    for (r = i[s], n = 0, void 0; n < r.length; n += 2) {
+                    for (r = i[s], n = 0, undefined; n < r.length; n += 2) {
                         var r;
                         var n;
 
@@ -627,7 +627,7 @@ exports.startWithArgs = function (t, S) {
             if (K.jsList.map(function (t) {
                 var i = mod_fire_path.relative(V, mod_fire_path.resolve(o, t));
                 Editor.isWin32 && (i = i.replace(/\\/g, "/")), s += "BK.Script.loadlib('GameRes://" + i + "'); \n";
-            }), s = n.replace("<Inject plugin code>", s), K.jsList = void 0, s === n) return t("Inject plugin code failure for qqplay"), void 0;
+            }), s = n.replace("<Inject plugin code>", s), K.jsList = undefined, s === n) return t("Inject plugin code failure for qqplay"), undefined;
         } else s = n.replace("<Inject plugin code>", "");
         mod_fire_fs.writeFileSync(r, s), t();
     }), C.task("copy-build-template", function (s) {
@@ -687,7 +687,7 @@ exports.startWithArgs = function (t, S) {
         Editor.Ipc.sendToAll("builder:state-changed", "cut-engine", 0);
         var r = G ? mod_fire_path.join(V, "src") : V;
         mod_fire_fs.ensureDirSync(H.jsCacheDir), t.excludedModules = t.excludedModules ? t.excludedModules.sort() : [];
-        var n = !1;
+        var n = false;
         if (mod_fire_fs.existsSync(H.jsCacheExcludes)) {
             var _e9 = mod_fire_fs.readJSONSync(H.jsCacheExcludes);
             _e9.excludes && _e9.version && (n = Editor.versions.cocos2d === _e9.version && L === _e9.nativeRenderer && _e9.excludes.toString() === t.excludedModules.toString() && _e9.sourceMaps === t.sourceMaps);
@@ -700,7 +700,7 @@ exports.startWithArgs = function (t, S) {
             return G && (t = t.pipe(mod_gulp_rename("cocos2d-jsb.js"))), t = t.pipe(C.dest(r));
         }
 
-        if (n && mod_fire_fs.existsSync(H.jsCache)) return o().on("end", s), void 0;
+        if (n && mod_fire_fs.existsSync(H.jsCache)) return o().on("end", s), undefined;
         var a = [];
 
         var l = require(Editor.url("unpack://engine/modules.json"));
@@ -709,7 +709,7 @@ exports.startWithArgs = function (t, S) {
             l.some(function (i) {
                 if (i.name === t) return i.entries && i.entries.forEach(function (t) {
                     a.push(mod_fire_path.join(Editor.url("unpack://engine"), t));
-                }), !0;
+                }), true;
             });
         }), "wechatgame-subcontext" === $ && l.forEach(function (t) {
             ("WebGL Renderer" === t.name || t.dependencies && -1 !== t.dependencies.indexOf("WebGL Renderer")) && t.entries && t.entries.forEach(function (t) {
@@ -735,7 +735,7 @@ exports.startWithArgs = function (t, S) {
         });
     }), C.task("copy-webDebugger", function (s) {
         var r = mod_fire_path.join(V, mod_fire_path.basename(H.webDebuggerSrc));
-        t.embedWebDebugger ? mod_fire_fs.copy(H.webDebuggerSrc, r, s) : mod_del(r, { force: !0 }, s);
+        t.embedWebDebugger ? mod_fire_fs.copy(H.webDebuggerSrc, r, s) : mod_del(r, { force: true }, s);
     }), C.task("revision-res-jsList", _asyncToGenerator(
     /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
         var i;
@@ -792,7 +792,7 @@ exports.startWithArgs = function (t, S) {
             F ? (r = r.concat(["game.js", "game.json", "project.config.json", "index.js"]), n = n.concat(["game.json", "project.config.json"])) : I && (r = r.concat(["main.js", "cocos2d-js.js", "cocos2d-js-min.js", "project.dev.js", "project.js", "settings.js"])), Editor.isWin32 && (n = n.map(function (e) {
                 return e.replace(/\\/g, "/");
             })), C.src(["src/*.js", "*"], { cwd: V, base: s }).pipe(mod_gulp_rev_all.revision({
-                debug: !0,
+                debug: true,
                 hashLength: x,
                 dontRenameFile: r,
                 dontSearchFile: n,
@@ -810,7 +810,7 @@ exports.startWithArgs = function (t, S) {
             t = function () {
                 var t = Editor.require("app://editor/share/engine-extends/json-packer");
                 var s = Editor.Utils.UuidUtils.compressUuid;
-                var r = mod_globby.sync(mod_fire_path.join(H.res, "import/**"), { nodir: !0 });
+                var r = mod_globby.sync(mod_fire_path.join(H.res, "import/**"), { nodir: true });
                 var n = new t();
 
                 for (var _t10 = 0; _t10 < r.length; ++_t10) {
@@ -822,17 +822,17 @@ exports.startWithArgs = function (t, S) {
 
                     var _c2 = mod_fire_fs.readJsonSync(_o4);
 
-                    var _l = s(mod_fire_path.basename(_o4, _a2), !0);
+                    var _l = s(mod_fire_path.basename(_o4, _a2), true);
 
-                    n.add(_l, _c2), mod_del.sync(_o4, { force: !0 });
+                    n.add(_l, _c2), mod_del.sync(_o4, { force: true });
                 }
                 return n.pack();
-            }(), mod_del.sync(mod_fire_path.join(V, "game.json"), { force: !0 }), mod_del.sync(mod_fire_path.join(V, "project.config.json"), { force: !0 });
+            }(), mod_del.sync(mod_fire_path.join(V, "game.json"), { force: true }), mod_del.sync(mod_fire_path.join(V, "project.config.json"), { force: true });
             var s = mod_fire_path.join(V, "game.js");
             var r = mod_fire_fs.readFileSync(s, "utf8");
             var n = 'SUBCONTEXT_ROOT = "' + D + '"';
 
-            r = r.replace(/SUBCONTEXT_ROOT = ""/g, n), mod_fire_fs.writeFileSync(mod_fire_path.join(V, "index.js"), r), mod_del.sync(s, { force: !0 });
+            r = r.replace(/SUBCONTEXT_ROOT = ""/g, n), mod_fire_fs.writeFileSync(mod_fire_path.join(V, "index.js"), r), mod_del.sync(s, { force: true });
             var a = Editor.url("packages://weapp-adapter/wechatgame/libs/sub-context-adapter.js");
             var c = mod_fire_path.join(V, "libs/sub-context-adapter.js");
 
@@ -868,10 +868,10 @@ exports.startWithArgs = function (t, S) {
                 var c;
                 try {
                     c = require("babel-core").transform(s.contents.toString(), {
-                        ast: !1,
-                        highlightCode: !1,
-                        sourceMaps: !1,
-                        compact: !1,
+                        ast: false,
+                        highlightCode: false,
+                        sourceMaps: false,
+                        compact: false,
                         filename: s.path,
                         presets: ["env"],
                         plugins: ["transform-decorators-legacy", "transform-class-properties", "transform-export-extensions", "add-module-exports"]
@@ -895,7 +895,7 @@ exports.startWithArgs = function (t, S) {
         var t = mod_fire_path.join(V, "src");
         return C.src(mod_fire_path.join(H.tmplBase, "runtime/**/*.js")).pipe(C.dest(t));
     }), C.task("encrypt-src-js", function (s) {
-        if (N || !t.encryptJs) return s(), void 0;
+        if (N || !t.encryptJs) return s(), undefined;
         var r = mod_fire_path.join(V, "src");
         var n = mod_fire_path.resolve(r, "../js backups (useful for debugging)");
 
@@ -913,14 +913,14 @@ exports.startWithArgs = function (t, S) {
             o.some(function (i) {
                 if (i.name === t) return i.entries.forEach(function (t) {
                     n.push(mod_fire_path.join(Editor.url("packages://jsb-adapter"), t));
-                }), void 0;
+                }), undefined;
             });
         }), mod_fire_fs.copySync(s, r, {
             filter: function filter(e) {
                 for (var _t12 = 0; _t12 < n.length; ++_t12) {
-                    if (n[_t12] === e) return !1;
+                    if (n[_t12] === e) return false;
                 }
-                return !0;
+                return true;
             }
         });
     }), C.task("copy-native-files", T("build-common", "copy-runtime-scripts", "copy-jsb-adapter", "copy-main-js", "finish-build", "encrypt-src-js")), C.task("build-cocos-native-project", function (e) {
@@ -929,7 +929,7 @@ exports.startWithArgs = function (t, S) {
     var se = k + $;
     if (se in C.tasks) {
         var re;
-        re = G ? [H.res + "/**/*", H.src + "/*/"] : mod_fire_path.join(V, "**/*"), Editor.log("Delete " + re), mod_del(re, { force: !0 }, function (e) {
+        re = G ? [H.res + "/**/*", H.src + "/*/"] : mod_fire_path.join(V, "**/*"), Editor.log("Delete " + re), mod_del(re, { force: true }, function (e) {
             if (e) return S(e);
             C.start(se, function (e) {
                 e ? S(e) : (G || Editor.Ipc.sendToMain("app:update-build-preview-path", V), S(null, Q));

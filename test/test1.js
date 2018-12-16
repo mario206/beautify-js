@@ -1,3 +1,4 @@
+/*
 
 var a = 1,b = 2,c = 3;
 var n = require("electron").ipcMain["sdfa"];
@@ -37,5 +38,27 @@ console.log(g);
 
 var kkk;
 
+function u(e, i, s, r) {
+    if (!e) return console.error("can not get url to build: " + i), null;
+}
+
+var kka = "1",u();
+*/
 
 
+{ nodir: !0 ; sdf : !1}
+
+var a = !0;
+
+function fun() {
+    a === !0;
+    a === true;
+}
+
+fun(!0,1,{a:!0},true);
+
+fun(true,1);
+
+void 0
+
+!a;

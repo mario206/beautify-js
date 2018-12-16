@@ -44,6 +44,7 @@ function splitVar(path) {
     }
 }
 
+
 function renameRequire(path) {
     if(path.node.callee.name == "require" && path.node.arguments.length == 1 && path.node.arguments[0].type == "StringLiteral") {
         var leftName;
@@ -95,8 +96,27 @@ function renameRequire(path) {
     }
 }
 
-
-
+/*
+!0  ->  true
+!1  -> false
+void 0 -> undefined
+ */
+function renameUnaryExpression(path) {
+    if(path.node.operator === "!" && path.node.argument.type === "NumericLiteral") {
+        var value;
+        if(path.node.argument.extra.raw === "0" && path.node.argument.extra.rawValue === 0) {
+            value = true;
+        } else if(path.node.argument.extra.raw === "1" && path.node.argument.extra.rawValue === 1) {
+            value = false;
+        } else {
+            console.error("unknown argument.extra.raw = " + path.node.argument.extra.raw);
+            return;
+        }
+        path.replaceWith(types.booleanLiteral(value));
+    } else if(path.node.operator === "void" && path.node.argument.type === "NumericLiteral" && path.node.argument.value == "0") {
+        path.replaceWith(types.identifier("undefined"));
+    }
+}
 
 
 var visitor = {
@@ -105,6 +125,9 @@ var visitor = {
     },
     CallExpression : {
         enter : renameRequire
+    },
+    UnaryExpression : {
+        enter : renameUnaryExpression
     }
 };
 

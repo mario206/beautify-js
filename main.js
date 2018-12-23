@@ -3,7 +3,9 @@ var fs = require("fs");
 var babel = require('babel-core');
 //可以实现类型判断，生成AST节点
 var types = require('babel-types');
-const isVarName = require('is-valid-var-name')
+const isVarName = require('is-valid-var-name');
+var generator = require("babel-generator");
+var babylon = require("babylon");
 //visitor可以对特定节点进行处理
 
 /// 允许包含字母、数字、美元符号($)和下划线，但第一个字符不允许是数字，不允许包含空格和其他标点符号著作权归作者所有。
@@ -19,6 +21,13 @@ function getValidName(name) {
 };
 
 var TypeDeclarator = "VariableDeclarator";
+var TypeForStatement = "ForStatement";
+var TypeExpressionStatement = "ExpressionStatement";
+var TypeReturnStatement = "ReturnStatement";
+var ThrowStatement = "ThrowStatement";
+var TypeCallExpression = "CallExpression";
+var TypeIfStatement = "IfStatement";
+var TypeLogicalExpression = "LogicalExpression";
 /*
 将 var 拆开。
 转换前
@@ -33,6 +42,11 @@ var c = 3;
 ```
 */
 function splitVar(path) {
+    var parent = path.parent;
+    if(parent && parent.type == TypeForStatement) {
+        /// test_split_var #2 暂不支持
+        return;
+    }
     var declarations = path.node.declarations;
     if(declarations.length > 1) {
         var result = [];
@@ -118,6 +132,84 @@ function renameUnaryExpression(path) {
     }
 }
 
+/*
+//input
+bar(),baz(),dak();
+// expect
+bar();
+baz();
+dak();
+ */
+function splitSequence(path) {
+    var exps = [];
+    for(var i = 0;i < path.node.expressions.length;++i) {
+        exps.push(types.expressionStatement(path.node.expressions[i]));
+    }
+    switch (path.parent.type) {
+        case TypeExpressionStatement : {
+            path.parentPath.replaceWithMultiple(exps);  //#1  test_sequence
+        }
+        break;
+        case TypeReturnStatement:   //#2
+        case ThrowStatement : {
+            var toInsertBefore = exps.slice(0,exps.length - 1);
+            var lastExp = path.node.expressions[exps.length-1];
+            var uid = path.scope.generateUidIdentifier("ret");
+            var ret = types.variableDeclaration("var", [types.variableDeclarator(uid, lastExp)]);
+
+            if(lastExp.type != TypeCallExpression) {
+                path.parentPath.insertBefore(toInsertBefore);
+                path.replaceWith(lastExp);
+            } else {
+                toInsertBefore.push(ret);
+                path.parentPath.insertBefore(toInsertBefore);
+                path.replaceWith(types.identifier(uid.name));
+            }
+
+        }
+        break;
+    }
+}
+
+/*
+a()  -> a();
+
+ */
+
+function warpAsExpression(node) {
+    var ret = null;
+    switch (node.type) {
+        default: {
+            ret = types.expressionStatement(node);
+        }
+        break;
+    }
+    return ret
+};
+
+
+/*
+// input
+a == 1 ? b() : c()
+
+//output
+if(a == 1 ) {
+    b();
+} else {
+    c();
+}
+*/
+/// 另一个解决方式使用闭包 https://stackoverflow.com/questions/8891481/convert-ternary-conditional-operators-into-if-statements
+function splitConditional(path) {
+    switch (path.parent.type) {
+        case TypeExpressionStatement: {          //   a == 1 ? b() : c();  最简单形式
+            var ifNode = types.ifStatement(path.node.test,warpAsExpression(path.node.consequent),warpAsExpression(path.node.alternate));
+            var statement = path.getStatementParent();
+            statement.replaceWith(ifNode);
+        }
+        break;
+    }
+}
 
 var visitor = {
     VariableDeclaration: {
@@ -128,11 +220,17 @@ var visitor = {
     },
     UnaryExpression : {
         enter : renameUnaryExpression
-    }
+    },
+    SequenceExpression : {
+        enter : splitSequence
+    },
+/*    ConditionalExpression : {
+        enter : splitConditional
+    }*/
 };
 
-var file = "./test/gulp-build.js";
-//var file = "./test/test1.js";
+//var file = "./test/gulp-build.js";
+var file = "./test/test1.js";
 
 
 var code = fs.readFileSync(file, "utf-8");
@@ -140,9 +238,16 @@ var code = fs.readFileSync(file, "utf-8");
 
 var result = babel.transform(code, {
     plugins: [
-        { visitor }
-    ]
+        { visitor },
+    ],
+
 });
 
-console.log(result.code);
-fs.writeFileSync("./test/result.js",result.code);
+
+
+var ast = babylon.parse(result.code);
+var s = new generator.CodeGenerator(ast, {}, result.code);
+var ss = s.generate();
+
+
+fs.writeFileSync("./test/result.js",ss.code);

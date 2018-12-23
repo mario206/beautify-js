@@ -46,6 +46,8 @@ var kka = "1",u();
 */
 
 
+
+/*
 { nodir: !0 ; sdf : !1}
 
 var a = !0;
@@ -62,3 +64,50 @@ fun(true,1);
 void 0
 
 !a;
+
+
+function u(e, i, s, r) {
+    if (!e) return console.error("can not get url to build: "), null;
+}
+
+console.log(u());
+*/
+
+/*
+
+var a = 1,b = 2,c = 3;
+
+for(var i = 1,j = 2;i < 100;++i) {
+}
+*/
+/*a = bar(),baz(),bas();
+if(a) bar(),baz(),bas();
+bar(),baz(),bas();*/
+
+/*function a() {
+    return foo(), bar(), new Error();
+}
+throw foo(), bar(), new Error();*/
+
+/*
+function sdf() {
+    return console.log("dsfdf"),null, a ? baz() : sdf();
+}
+function u(e, i, s, r) {
+    if (!e) return console.error("can not get url to build: " + i), null,a ? baz() : sdf();
+}
+
+
+function s() {
+    var u = e.slice(c + 1);
+    return u ? ("audio-clip" === s && (r || (r = Editor.assetdb.loadMetaByUuid(i)), r && "1" === r.downloadMode && (u += "?useDom=1")), { mountPoint: l, relative: u, uuid: i, isSubAsset: n }) : (console.error("unknown relative to build: " + e), null);
+}
+
+a == 1 ? b() : c();
+
+I ? (_ = t.qqplay.orientation) : "auto" === (_ = t.webOrientation) && (_ = "");
+*/
+
+
+
+~p ? s.slice(0, p) + "." + a + s.slice(p) : s + "." + a;

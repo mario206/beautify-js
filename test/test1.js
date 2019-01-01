@@ -108,6 +108,10 @@ a == 1 ? b() : c();
 I ? (_ = t.qqplay.orientation) : "auto" === (_ = t.webOrientation) && (_ = "");
 */
 
+function s() {
+    if (N || !t.encryptJs) return s(), void 0;
+}
 
 
-~p ? s.slice(0, p) + "." + a + s.slice(p) : s + "." + a;
+testA ? consequent() : testB && alternate()
+

@@ -1,10 +1,9 @@
 'use strict'
-
+// https://github.com/gzzhanghao/babel-plugin-transform-beautifier
 module.exports = babel => {
     const t = babel.types
     return {
         visitor: {
-
             VariableDeclaration(path) {
                 const { declarations, kind } = path.node
                 if (path.parentPath.isForStatement()) {

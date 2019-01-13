@@ -1,8 +1,9 @@
 //babel核心库，用来实现核心的转换引擎
 var fs = require("fs");
 var babel = require('@babel/core');
-var beautifier = require("./beautifier")(babel);
-var renameRequire = require("./renameRequire")(babel);
+var beautifier = require("./vistors/beautifier")(babel);
+var renameRequire = require("./vistors/renameRequire")(babel);
+var simpleVisitor = require("./vistors/simpleVisitor")(babel);
 var glob = require("glob");
 
 function transformCode(file) {
@@ -10,6 +11,7 @@ function transformCode(file) {
     var code = fs.readFileSync(file, "utf-8");
     var result = babel.transform(code, {
         plugins: [
+            {visitor : simpleVisitor.visitor},
             {visitor: beautifier.visitor},
             {visitor: renameRequire.visitor}
         ],
@@ -19,7 +21,9 @@ function transformCode(file) {
         presets: ["@babel/env"]
     });
     code = es5Code.code;
-    fs.writeFileSync(file,code);
+    //fs.writeFileSync(file,code);
+    fs.writeFileSync("./test/result.js",code);
+    console.log(code)
 }
 
 function myTransformApp(root) {
@@ -38,4 +42,5 @@ function myTransformApp(root) {
     }
 }
 //myTransformApp("/Users/mario/Desktop/Repository/app/**/*.js");
-transformCode("./test/gulp-build.js");
+//transformCode("./test/gulp-build.js");
+transformCode("./test/test2.js");

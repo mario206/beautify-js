@@ -1,6 +1,6 @@
 var types = null;
 module.exports = babel => {
-    types = babel.types
+    types = babel.types;
     return {
         visitor: {
             CallExpression(path) {
@@ -8,7 +8,7 @@ module.exports = babel => {
             }
         }
     }
-}
+};
 
 const isVarName = require('is-valid-var-name');
 

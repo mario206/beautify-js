@@ -6,6 +6,9 @@
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>
+    <content url="file://$MODULE_DIR$/node_modules/@babel" />
+    <content url="file://$MODULE_DIR$/node_modules/@babel/traverse" />
+    <content url="file://$MODULE_DIR$/node_modules/debug" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

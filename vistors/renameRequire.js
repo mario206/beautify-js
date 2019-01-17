@@ -5,6 +5,9 @@ module.exports = babel => {
         visitor: {
             CallExpression(path) {
                 renameRequire(path);
+            },
+            AssignmentExpression(path) {
+                renameExport(path);
             }
         }
     }
@@ -57,8 +60,9 @@ function renameRequire(path) {
             return;
         }
         var tryCnt = 0;
+        var newName;
         while(true) {
-            var newName = "mod_" + srcName + nameSubfix + (tryCnt == 0 ? "" : tryCnt);
+            newName = "mod_" + srcName + nameSubfix + (tryCnt == 0 ? "" : tryCnt);
             if(path.scope.hasBinding(newName)) {
                 tryCnt++;
             } else {
@@ -71,8 +75,43 @@ function renameRequire(path) {
                 break;
             }
         }
+        /* 接下来还可以对引用了module的s做重命名
+            var mod_util = require("util");
+            var s = mod_util.format;
+         */
+        var bindings = path.parentPath.scope.getBinding(newName);
+        if(bindings) {
+            for(var key in bindings.referencePaths) {
+                var ref = bindings.referencePaths[key];
+                if(ref.isIdentifier() && ref.parentPath.isMemberExpression() && ref.parentPath.parentPath.isVariableDeclarator()) {
+                    var leftName = ref.parentPath.parentPath.node.id.name;
+                    var memberName = ref.parentPath.node.property.name;
+                    var tryCnt = 0;
+                    var finalName;
+                    do {
+                        finalName = newName + "_" + memberName + (tryCnt == 0 ? "" : tryCnt);
+                        tryCnt++;
+                    } while(ref.parentPath.parentPath.scope.hasBinding(finalName));
+                    ref.parentPath.parentPath.scope.rename(leftName,finalName);
+                }
+            }
+        }
 
     }
 }
-
-
+function renameExport(path) {
+    if(path.parentPath.isStatement()) {
+        var left = path.get("left");
+        var right= path.get("right");
+        if(left.isMemberExpression() && right.isIdentifier()) {
+            if(left.node.object.name == "exports") {
+                var funName = left.node.property.name;
+                var rightName = right.node.name;
+                while(path.scope.getBinding(funName)) {
+                    funName = "_" + funName;
+                }
+                path.scope.rename(rightName,funName);
+            }
+        }
+    }
+}

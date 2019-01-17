@@ -4,17 +4,27 @@ var babel = require('@babel/core');
 var beautifier = require("./vistors/beautifier")(babel);
 var renameRequire = require("./vistors/renameRequire")(babel);
 var simpleVisitor = require("./vistors/simpleVisitor")(babel);
+
 var glob = require("glob");
 
 function transformCode(file) {
-    console.log("transformCode " + file);
+    console.log("transformCode begin" + file);
     var code = fs.readFileSync(file, "utf-8");
-    var result = babel.transform(code, {
-        plugins: [
-            {visitor : simpleVisitor.visitor},
+    var es5Code = babel.transform(code, {
+        presets: ["@babel/env"]
+    });
+    var ast = babel.parse(code);
+
+    var result = babel.transform(es5Code.code, {
+/*        plugins: [
+            /{visitor: simpleVisitor.visitor},
             {visitor: beautifier.visitor},
             {visitor: renameRequire.visitor}
-        ],
+        ],*/
+        plugins: [
+            {visitor: simpleVisitor.visitor}
+
+        ]
     });
     var code = result.code;
     var es5Code = babel.transform(code, {
@@ -22,8 +32,9 @@ function transformCode(file) {
     });
     code = es5Code.code;
     //fs.writeFileSync(file,code);
+    console.log("transformCode end" + file);
     fs.writeFileSync("./test/result.js",code);
-    console.log(code)
+    //console.log(code)
 }
 
 function myTransformApp(root) {
@@ -44,3 +55,4 @@ function myTransformApp(root) {
 //myTransformApp("/Users/mario/Desktop/Repository/app/**/*.js");
 //transformCode("./test/gulp-build.js");
 transformCode("./test/test2.js");
+

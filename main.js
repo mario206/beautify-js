@@ -10,30 +10,28 @@ var glob = require("glob");
 function transformCode(file) {
     console.log("transformCode begin" + file);
     var code = fs.readFileSync(file, "utf-8");
-    var es5Code = babel.transform(code, {
-        presets: ["@babel/env"]
-    });
+
+/*    var es5Code = babel.transform(code, {
+        presets: ["@babel/env"],
+        plugins: ["@babel/plugin-transform-runtime"]
+    });*/
     var ast = babel.parse(code);
 
-    var result = babel.transform(es5Code.code, {
-/*        plugins: [
-            /{visitor: simpleVisitor.visitor},
+    var result = babel.transform(code, {
+        plugins: [
             {visitor: beautifier.visitor},
             {visitor: renameRequire.visitor}
-        ],*/
-        plugins: [
-            {visitor: simpleVisitor.visitor}
-
-        ]
+        ],
     });
     var code = result.code;
-    var es5Code = babel.transform(code, {
-        presets: ["@babel/env"]
-    });
-    code = es5Code.code;
-    //fs.writeFileSync(file,code);
-    console.log("transformCode end" + file);
-    fs.writeFileSync("./test/result.js",code);
+/*    var es5Code = babel.transform(code, {
+        presets: ["@babel/env"],
+        plugins: ["@babel/plugin-transform-runtime"]
+    });*/
+/*    code = es5Code.code;*/
+    fs.writeFileSync(file,code);
+    //console.log("transformCode end" + file);
+    //fs.writeFileSync("./test/result.js",code);
     //console.log(code)
 }
 
@@ -52,7 +50,8 @@ function myTransformApp(root) {
         }
     }
 }
+myTransformApp("/Applications/CocosCreator2.05.app/Contents/Resources/app/**/*.js")
 //myTransformApp("/Users/mario/Desktop/Repository/app/**/*.js");
 //transformCode("./test/gulp-build.js");
-transformCode("./test/test2.js");
+//transformCode("./test/test2.js");
 

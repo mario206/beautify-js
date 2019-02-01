@@ -108,15 +108,30 @@ module.exports = babel => {
                     return
                 }
             },
+/*
+会将
+```
+module.exports = {
+    copy : async function(i, a) {}
+}
+```
+转为
+```
+module.exports = {
+    copy(i, a) {}
+}
+一般情况下没问题，不过在这里例子里。少了async跑不起来，好像没找到方法判断有没有带async。先注释掉
+```
+*/
 
-            ObjectProperty(path) {
+/*            ObjectProperty(path) {
                 const { key, value, computed } = path.node
 
                 if (!path.get('value').isFunctionExpression()) {
                     return
                 }
                 path.replaceWith(t.objectMethod('method', key, value.params, value.body, computed))
-            },
+            },*/
 
             IfStatement(path) {
                 const consequent = path.get('consequent')

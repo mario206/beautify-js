@@ -8,6 +8,10 @@ module.exports = babel => {
             },
             AssignmentExpression(path) {
                 renameExport(path);
+            },
+            FunctionDeclaration(path) {
+                renameFunctionParam(path);
+                renameFunctionName(path);
             }
         }
     }
@@ -115,3 +119,45 @@ function renameExport(path) {
         }
     }
 }
+
+
+function renameFunctionParam(path) {
+    var params = path.get("params");
+
+    for(var i = 0;i < params.length;++i) {
+        var param = params[i];
+        if(param.isIdentifier()) {
+            var raw_name = param.node.name;
+            var funName = path.node.id.name;
+            var prefix = "";
+            if(funName.length > 0) {
+                prefix = funName[0];
+            }
+            var finalName;
+            var tryCnt = 0;
+            do {
+                finalName = "$" + prefix + "_" + "IN_" + (i + 1) + (tryCnt != 0 ? "_" : "") + "$";
+                finalName = finalName.toLocaleUpperCase();
+                tryCnt++;
+            } while(path.scope.hasBinding(finalName));
+            path.scope.rename(raw_name,finalName);
+        } else {
+            console.error("not identifier");
+        }
+    }
+}
+
+function renameFunctionName(path) {
+    var funName = path.node.id.name;
+    var newName;
+    if(funName.length > 0 && funName.length < 3) {
+        newName = "_" + funName + "_Fun_";
+        if(!path.scope.hasBinding(newName)) {
+            path.scope.rename(funName,newName);
+        } else {
+            console.error("has binding funname " + newName);
+        }
+    }
+};
+
+

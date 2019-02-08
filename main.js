@@ -7,7 +7,7 @@ var simpleVisitor = require("./vistors/simpleVisitor")(babel);
 
 var glob = require("glob");
 
-function transformCode(file) {
+function transformCode(file,reWrite) {
     console.log("transformCode begin" + file);
     var code = fs.readFileSync(file, "utf-8");
 
@@ -29,9 +29,12 @@ function transformCode(file) {
         plugins: ["@babel/plugin-transform-runtime"]
     });*/
 /*    code = es5Code.code;*/
-    fs.writeFileSync(file,code);
     //console.log("transformCode end" + file);
-    //fs.writeFileSync("./test/result.js",code);
+    if(reWrite) {
+        fs.writeFileSync(file,code);
+    } else {
+        fs.writeFileSync("./test/result.js",code);
+    }
     //console.log(code)
 }
 
@@ -43,15 +46,23 @@ function myTransformApp(root) {
     console.log(files);
     for(var i = 0;i < files.length;++i) {
         try {
-            transformCode(files[i]);
+            transformCode(files[i],true);
         } catch(e) {
             console.error("error transform :" + files[i]);
             console.error(e);
         }
     }
 }
-myTransformApp("/Applications/CocosCreator2.05.app/Contents/Resources/app/**/*.js")
 //myTransformApp("/Users/mario/Desktop/Repository/app/**/*.js");
 //transformCode("./test/gulp-build.js");
-//transformCode("./test/test2.js");
 
+
+function runCode(bTest) {
+    if(!bTest) {
+        myTransformApp("/Applications/CocosCreator.app/Contents/Resources/app/**/*.js")
+    } else {
+        transformCode("./test/test2.js",false);
+    }
+}
+
+runCode(false);

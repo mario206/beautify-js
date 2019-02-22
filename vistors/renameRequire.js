@@ -12,6 +12,9 @@ module.exports = babel => {
             FunctionDeclaration(path) {
                 renameFunctionParam(path);
                 renameFunctionName(path);
+            },
+            VariableDeclaration(path) {
+                renameLocalVariable(path);
             }
         }
     }
@@ -160,4 +163,26 @@ function renameFunctionName(path) {
     }
 };
 
+
+function renameLocalVariable(path) {
+    const { declarations, kind } = path.node
+    if (path.parentPath.isForStatement()) {
+        return
+    }
+    for(var i = 0;i < declarations.length;++i) {
+        var declarator = declarations[i];
+        var rawName = declarator.id.name;
+        if(rawName && rawName.length <= 2) {
+            var line = declarator.loc.end.line;
+            var newName;
+            var tryCnt = 0;
+            do {
+                newName = "$_" + rawName + "_$" + line + (tryCnt == 0 ? "" : ("_" + tryCnt));
+                tryCnt++;
+            } while(path.scope.hasBinding(newName));
+
+            path.scope.rename(rawName,newName);
+        }
+    }
+}
 

@@ -41,7 +41,7 @@ function transformCode(file,reWrite) {
 function myTransformApp(root) {
     var files = glob.sync(root, {});
     files = files.filter(function (file) {
-        return (file.includes("editor/") || file.includes("editor-framework/")) && !file.includes("node_modules");
+        return (file.includes("editor/") || file.includes("editor-framework/") || file.includes("dashboard/")) && !file.includes("node_modules");
     });
     console.log(files);
     for(var i = 0;i < files.length;++i) {
@@ -59,7 +59,7 @@ function myTransformApp(root) {
 
 function runCode(bTest) {
     if(!bTest) {
-        myTransformApp("/Applications/CocosCreator.app/Contents/Resources/app/**/*.js")
+        myTransformApp("/Applications/CocosCreator_v2.0.5.app/Contents/Resources/app/**/*.js")
     } else {
         transformCode("./test/test2.js",false);
     }

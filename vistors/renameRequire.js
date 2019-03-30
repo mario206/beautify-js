@@ -66,6 +66,10 @@ function renameRequire(path) {
         } else {
             return;
         }
+        if(leftName && leftName.length >= 3) {
+            return;
+        }
+
         var tryCnt = 0;
         var newName;
         while(true) {
@@ -131,9 +135,12 @@ function renameFunctionParam(path) {
         var param = params[i];
         if(param.isIdentifier()) {
             var raw_name = param.node.name;
+            if(raw_name.length >= 3) {
+                return;
+            }
             var funName = path.node.id.name;
             var prefix = "";
-            if(funName.length > 0) {
+            if(funName && funName.length > 0) {
                 prefix = funName[0];
             }
             var finalName;

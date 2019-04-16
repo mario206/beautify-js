@@ -9,7 +9,6 @@ module.exports = babel => {
                 if (path.parentPath.isForStatement()) {
                     return
                 }
-
                 const emptyDeclarator = []
                 const nonEmptyDeclarator = declarations.filter(dec => {
                     if (dec.init) {

@@ -1,9 +1,15 @@
-function classA() {
+(function(){
+  console.log("aaa");
+})();
 
-}
+(function(){
+  console.log("aaa");
+})(a,function(){
+  console.log("bbb");
+  (function (){
+    console.log("ccc");
+  })(a);
+});
 
-classA.prototype = {
-  funA : function(a,b,c) {
-
-  }
-}
+(function (){})(a,b,c)
+a(function(){});

@@ -12,6 +12,17 @@ g_renameMap = {};
 g_currFileName = "";
 g_nameHash = "";
 
+/// 允许包含字母、数字、美元符号($)和下划线，但第一个字符不允许是数字，不允许包含空格和其他标点符号著作权归作者所有。
+function getValidName(name) {
+    if(!/^[a-zA-Z_$]/.test(name)) {
+        name[0] = "_";
+    }
+    name = name.replace(/-/g,"_");
+    name = name.replace(/\./g,"");
+    name = name.replace(/\//g,"");
+    name = name.replace(/ /g,"");
+    return name;
+};
 
 function processCodeNtimes(code) {
     var ArrVisitors = Array.prototype.slice.call(arguments, 1);
@@ -33,15 +44,20 @@ function transformCode(file,reWrite) {
     console.log("transformCode begin: " + file);
     var code = fs.readFileSync(file, "utf-8");
     g_currFileName = path.basename(file);
-    g_nameHash = "";
-    var md5Value= crypto.createHash('md5').update(g_currFileName, 'utf8').digest('hex');
+    g_currFileName = getValidName(g_currFileName).toLocaleUpperCase();
+    g_nameHash = g_currFileName;
+    if(g_nameHash.length > 3) {
+        g_nameHash = g_nameHash.substr(0,3);
+    }
+
+/*    var md5Value= crypto.createHash('md5').update(g_currFileName, 'utf8').digest('hex');
     for(var i = 0;i < md5Value.length;++i) {
         if('a' <= md5Value[i] && md5Value[i] <= 'z') {
             if(g_nameHash.length < 3) {
                 g_nameHash += md5Value[i];
             }
         }
-    }
+    }*/
     if(g_nameHash.length < 3) {
         console.error("g_nameHash.leng < 3");
     }
@@ -106,9 +122,11 @@ function runCode(bTest) {
 //runCode(false);
 
 
-//transformCode("/Applications/CocosCreator2.09.app/Contents/Resources/app/editor/core/gulp-build.js",true);
-//transformCode("/Applications/CocosCreator2.05.app/Contents/Resources/app/editor/core/gulp-build.js",true);
+transformCode("/Applications/CocosCreator2.09.app/Contents/Resources/app/editor/core/gulp-build.js",true);
+transformCode("/Applications/CocosCreator2.05.app/Contents/Resources/app/editor/core/gulp-build.js",true);
 
-transformCode("/Applications/CocosCreator2.05.app/Contents/Resources/app/editor/page/build/texture-packer/packing/maxrects.js",true);
-transformCode("/Applications/CocosCreator2.09.app/Contents/Resources/app/editor/page/build/texture-packer/packing/maxrects.js",true);
+
+/*transformCode("/Applications/CocosCreator2.05.app/Contents/Resources/app/editor/page/build/texture-packer/packing/maxrects.js",true);
+transformCode("/Applications/CocosCreator2.09.app/Contents/Resources/app/editor/page/build/texture-packer/packing/maxrects.js",true);*/
+
 

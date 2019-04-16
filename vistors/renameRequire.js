@@ -11,6 +11,7 @@ module.exports = babel => {
         visitor: {
             CallExpression(path) {
                 renameRequire(path);
+                processLabmda(path);
             },
             FunctionDeclaration(path) {
                 renameFunctionParam(path);
@@ -21,12 +22,13 @@ module.exports = babel => {
             },
             FunctionExpression(path) {
                 renameFunctionParam(path);
-            }
-        }
+            },
+        },
     }
 };
 
 const isVarName = require('is-valid-var-name');
+
 
 /// 允许包含字母、数字、美元符号($)和下划线，但第一个字符不允许是数字，不允许包含空格和其他标点符号著作权归作者所有。
 function getValidName(name) {
@@ -39,7 +41,6 @@ function getValidName(name) {
     name = name.replace(/ /g,"");
     return name;
 };
-
 function renameRequire(path) {
     if(path.node.callee.name == "require" && path.node.arguments.length == 1 && types.isStringLiteral(path.node.arguments[0])) {
         var leftName;
@@ -197,7 +198,7 @@ function __getRenameVariableName(path,rawName,line) {
     do {
         var hex = Number(tryCnt).toString(16);
         var trySubFix = (tryCnt == 0 ? "" : ("_" + hex));
-        newName = "$_" + g_nameHash.toLocaleUpperCase() + "_" + rawName + "_" + trySubFix + "$"
+        newName = "$_" + g_nameHash.toLocaleUpperCase() + "_" + rawName + trySubFix + "$";
         tryCnt++;
     } while(path.scope.hasBinding(newName));
     g_renameMap[newName] = true;
@@ -219,3 +220,32 @@ function __getRenameFunctionParam(path,funName,index) {
     return finalName;
 }
 
+function processLabmda(path) {
+    var callee = path.get("callee");
+    if(callee && callee.isFunctionExpression() && !callee.node.id) {
+        var statement = path;
+        while(!statement.isStatement()) {
+            statement = statement.parentPath;
+        }
+        var finalName = __getLambdaFunName(path);
+        var varName = types.identifier(finalName);
+        var declaration = types.variableDeclaration("var", [types.variableDeclarator(varName,callee.node)]);
+
+        statement.insertBefore(declaration);
+
+        callee.replaceWith(varName);
+        //path.node.callee = callexp;
+    }
+}
+
+function __getLambdaFunName(path) {
+    var finalName;
+    var tryCnt = 0;
+    do {
+        var hex = Number(tryCnt).toString(16);
+        finalName = "_" + g_nameHash.toLocaleUpperCase() + (tryCnt != 0 ? ("_" + hex) : "") + "_Lambda_";
+        tryCnt++;
+    } while(path.scope.hasBinding(finalName) || g_renameMap[finalName]);
+    g_renameMap[finalName] = true;
+    return finalName;
+};

@@ -1,13 +1,16 @@
+var util = require('util');
 var types = null;
 module.exports = babel => {
     types = babel.types;
     return {
+        visitor1 :{
+            AssignmentExpression(path) {
+                renameExport(path);
+            }
+        },
         visitor: {
             CallExpression(path) {
                 renameRequire(path);
-            },
-            AssignmentExpression(path) {
-                renameExport(path);
             },
             FunctionDeclaration(path) {
                 renameFunctionParam(path);
@@ -15,6 +18,9 @@ module.exports = babel => {
             },
             VariableDeclaration(path) {
                 renameLocalVariable(path);
+            },
+            FunctionExpression(path) {
+                renameFunctionParam(path);
             }
         }
     }
@@ -66,7 +72,7 @@ function renameRequire(path) {
         } else {
             return;
         }
-        if(leftName && leftName.length >= 3) {
+        if(leftName && leftName.length >= 3 && !leftName.startsWith("$")) {
             return;
         }
 
@@ -138,18 +144,16 @@ function renameFunctionParam(path) {
             if(raw_name.length >= 3) {
                 return;
             }
-            var funName = path.node.id.name;
-            var prefix = "";
-            if(funName && funName.length > 0) {
-                prefix = funName[0];
+            var funName = "";
+            if(path.isFunctionExpression()) {
+                //FunctionExpression id == null
+                if(path.parentPath.isObjectProperty()) {
+                    funName = path.parentPath.node.key.name;
+                }
+            } else {
+                funName = path.node.id.name;
             }
-            var finalName;
-            var tryCnt = 0;
-            do {
-                finalName = "$" + prefix + "_" + "IN_" + (i + 1) + (tryCnt != 0 ? "_" : "") + "$";
-                finalName = finalName.toLocaleUpperCase();
-                tryCnt++;
-            } while(path.scope.hasBinding(finalName));
+            var finalName = __getRenameFunctionParam(path,funName,i);
             path.scope.rename(raw_name,finalName);
         } else {
             console.error("not identifier");
@@ -181,15 +185,37 @@ function renameLocalVariable(path) {
         var rawName = declarator.id.name;
         if(rawName && rawName.length <= 2) {
             var line = declarator.loc.end.line;
-            var newName;
-            var tryCnt = 0;
-            do {
-                newName = "$_" + rawName + "_$" + line + (tryCnt == 0 ? "" : ("_" + tryCnt));
-                tryCnt++;
-            } while(path.scope.hasBinding(newName));
-
+            var newName = __getRenameVariableName(path,rawName,line);
             path.scope.rename(rawName,newName);
         }
     }
+}
+
+function __getRenameVariableName(path,rawName,line) {
+    var tryCnt = 0;
+    var newName = "";
+    do {
+        var hex = Number(tryCnt).toString(16);
+        var trySubFix = (tryCnt == 0 ? "" : ("_" + hex));
+        newName = "$_" + g_nameHash.toLocaleUpperCase() + "_" + rawName + "_" + trySubFix + "$"
+        tryCnt++;
+    } while(path.scope.hasBinding(newName));
+    g_renameMap[newName] = true;
+    return newName;
+}
+
+function __getRenameFunctionParam(path,funName,index) {
+    var finalName;
+    var tryCnt = 0;
+    var prefix = (funName && funName.length > 4) ? funName.substr(0,4) : "";
+    do {
+        var hex = Number(tryCnt).toString(16);
+        finalName = util.format('$_%s_%s_IN%s%s$',g_nameHash,prefix,(tryCnt != 0 ? ("_" + hex + "_")  : ""),index + 1);
+        finalName = finalName.toLocaleUpperCase();
+        tryCnt++;
+    } while(path.scope.hasBinding(finalName));
+
+    g_renameMap[finalName] = true;
+    return finalName;
 }
 

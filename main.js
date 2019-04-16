@@ -126,7 +126,7 @@ transformCode("/Applications/CocosCreator2.09.app/Contents/Resources/app/editor/
 transformCode("/Applications/CocosCreator2.05.app/Contents/Resources/app/editor/core/gulp-build.js",true);
 
 
-/*transformCode("/Applications/CocosCreator2.05.app/Contents/Resources/app/editor/page/build/texture-packer/packing/maxrects.js",true);
-transformCode("/Applications/CocosCreator2.09.app/Contents/Resources/app/editor/page/build/texture-packer/packing/maxrects.js",true);*/
+transformCode("/Applications/CocosCreator2.05.app/Contents/Resources/app/editor/page/build/texture-packer/packing/maxrects.js",true);
+transformCode("/Applications/CocosCreator2.09.app/Contents/Resources/app/editor/page/build/texture-packer/packing/maxrects.js",true);
 
 

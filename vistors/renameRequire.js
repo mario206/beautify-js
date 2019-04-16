@@ -208,7 +208,10 @@ function __getRenameVariableName(path,rawName,line) {
 function __getRenameFunctionParam(path,funName,index) {
     var finalName;
     var tryCnt = 0;
-    var prefix = (funName && funName.length > 4) ? funName.substr(0,4) : "";
+    var prefix = "";
+    if(funName) {
+        prefix = (funName.length > 4) ? funName.substr(0,4) : funName;
+    }
     do {
         var hex = Number(tryCnt).toString(16);
         finalName = util.format('$_%s_%s_IN%s%s$',g_nameHash,prefix,(tryCnt != 0 ? ("_" + hex + "_")  : ""),index + 1);

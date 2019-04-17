@@ -34,7 +34,7 @@ module.exports = babel => {
 
             SequenceExpression(path) {
                 /*
-                在循环体里面的逗号表示式不能提到循环体外
+                在循环体里面的逗号表示式不能提到循环体外，仅init可以
                 例子1：
                     if(var i = 0;i < n;++b,++c) //不能把++b提出去
                 例子2:
@@ -43,8 +43,13 @@ module.exports = babel => {
                 */
                 const exprs = path.node.expressions
                 const parentPath = path.parentPath
-
-                if (parentPath.isExpressionStatement() || parentPath.isIfStatement() || parentPath.isSwitchStatement()) {
+                if (
+                    (parentPath.isForStatement() && path.key == "init")
+                    || parentPath.isExpressionStatement()
+                    || parentPath.isIfStatement()
+                    || parentPath.isSwitchStatement()
+                    || parentPath.isReturnStatement()
+                ) {
                     parentPath.insertBefore(exprs.slice(0, -1).map(exp => t.expressionStatement(exp)))
                     path.replaceWith(exprs[exprs.length - 1])
                 }

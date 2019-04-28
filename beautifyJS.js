@@ -7,10 +7,17 @@ var glob = require("glob");
 var path = require("path");
 
 var beautifyJS = {};
-
-g_renameMap = {};
-g_currFileName = "";
-g_nameHash = "";
+g_option = {
+    renameMap : {},
+    currFileName : "",
+    nameHash : "",
+    bRenameLambda : true,
+    bRenameFunctionName : true,
+    bRenameFunctionParam : true,
+    bRenameLocalVariable : true,
+    bRenameRequire : true,
+    bRenameExport : true
+};
 
 /// 允许包含字母、数字、美元符号($)和下划线，但第一个字符不允许是数字，不允许包含空格和其他标点符号著作权归作者所有。
 function getValidName(name) {
@@ -52,9 +59,9 @@ beautifyJS.transformWithFile = function(file,reWrite) {
 
     if(options.errCode == 0) {
         if(reWrite) {
-            fs.writeFileSync(file,code);
+            fs.writeFileSync(file,options.result);
         } else {
-            fs.writeFileSync("./test/result.js",code);
+            fs.writeFileSync("./test/result.js",options.result);
         }
     }
     console.log("transformWithFile end: " + file);
@@ -67,13 +74,20 @@ beautifyJS.transformCode = function(options) {
         var fileName = options.filename || "";
         console.log("transformCode begin" + fileName);
 
-        g_currFileName = path.basename(fileName);
-        g_currFileName = getValidName(g_currFileName).toLocaleUpperCase();
-        g_nameHash = g_currFileName;
-        if(g_nameHash.length > 3) {
-            g_nameHash = g_nameHash.substr(0,3);
+        g_option.currFileName = path.basename(fileName);
+        g_option.currFileName = getValidName(g_option.currFileName).toLocaleUpperCase();
+        g_option.nameHash = g_option.currFileName;
+        if(g_option.nameHash.length > 3) {
+            g_option.nameHash = g_option.nameHash.substr(0,3);
         }
         options.errCode = 0;
+
+        g_option.bRenameLambda = options.bRenameLambda || true;
+        g_option.bRenameFunctionName = options.bRenameFunctionName || true;
+        g_option.bRenameFunctionParam = options.bRenameFunctionParam || true;
+        g_option.bRenameLocalVariable = options.bRenameLocalVariable || true;
+        g_option.bRenameRequire = options.bRenameRequire || true;
+        g_option.bRenameExport = options.bRenameExport || true;
 
         var result = processCodeNtimes(code,[
             beautifier.visitor,renameRequire.visitor1

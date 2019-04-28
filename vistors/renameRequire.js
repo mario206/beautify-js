@@ -5,23 +5,37 @@ module.exports = babel => {
     return {
         visitor1 :{
             AssignmentExpression(path) {
-                renameExport(path);
+                if(g_option.bRenameExport) {
+                    renameExport(path);
+                }
             }
         },
         visitor: {
             CallExpression(path) {
-                renameRequire(path);
-                processLabmda(path);
+                if(g_option.bRenameRequire) {
+                    renameRequire(path);
+                }
+                if(g_option.bRenameLambda) {
+                    processLabmda(path);
+                }
             },
             FunctionDeclaration(path) {
-                renameFunctionParam(path);
-                renameFunctionName(path);
+                if(g_option.bRenameFunctionName) {
+                    renameFunctionName(path);
+                }
+                if(g_option.bRenameFunctionParam) {
+                    renameFunctionParam(path);
+                }
             },
             VariableDeclaration(path) {
-                renameLocalVariable(path);
+                if(g_option.bRenameLocalVariable) {
+                    renameLocalVariable(path);
+                }
             },
             FunctionExpression(path) {
-                renameFunctionParam(path);
+                if(g_option.bRenameFunctionParam) {
+                    renameFunctionParam(path);
+                }
             },
         },
     }
@@ -198,10 +212,10 @@ function __getRenameVariableName(path,rawName,line) {
     do {
         var hex = Number(tryCnt).toString(16);
         var trySubFix = (tryCnt == 0 ? "" : ("_" + hex));
-        newName = "$_" + g_nameHash.toLocaleUpperCase() + "_" + rawName + trySubFix + "$";
+        newName = "$_" + g_option.nameHash.toLocaleUpperCase() + "_" + rawName + trySubFix + "$";
         tryCnt++;
     } while(path.scope.hasBinding(newName));
-    g_renameMap[newName] = true;
+    g_option.renameMap[newName] = true;
     return newName;
 }
 
@@ -214,12 +228,12 @@ function __getRenameFunctionParam(path,funName,index) {
     }
     do {
         var hex = Number(tryCnt).toString(16);
-        finalName = util.format('$_%s_%s_IN%s%s$',g_nameHash,prefix,(tryCnt != 0 ? ("_" + hex + "_")  : ""),index + 1);
+        finalName = util.format('$_%s_%s_IN%s%s$',g_option.nameHash,prefix,(tryCnt != 0 ? ("_" + hex + "_")  : ""),index + 1);
         finalName = finalName.toLocaleUpperCase();
         tryCnt++;
     } while(path.scope.hasBinding(finalName));
 
-    g_renameMap[finalName] = true;
+    g_option.renameMap[finalName] = true;
     return finalName;
 }
 
@@ -246,9 +260,9 @@ function __getLambdaFunName(path) {
     var tryCnt = 0;
     do {
         var hex = Number(tryCnt).toString(16);
-        finalName = "_" + g_nameHash.toLocaleUpperCase() + (tryCnt != 0 ? ("_" + hex) : "") + "_Lambda_";
+        finalName = "_" + g_option.nameHash.toLocaleUpperCase() + (tryCnt != 0 ? ("_" + hex) : "") + "_Lambda_";
         tryCnt++;
-    } while(path.scope.hasBinding(finalName) || g_renameMap[finalName]);
-    g_renameMap[finalName] = true;
+    } while(path.scope.hasBinding(finalName) || g_option.renameMap[finalName]);
+    g_option.renameMap[finalName] = true;
     return finalName;
 };

@@ -1,4 +1,6 @@
 var beautifyJs = require("./beautifyJS");
+var glob = require("glob");
+
 
 
 function myTransformApp(root) {

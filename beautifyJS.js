@@ -52,7 +52,7 @@ beautifyJS.transformWithFile = function(file,reWrite) {
     var code = fs.readFileSync(file, "utf-8");
     var options = {
         code : code,
-        filename : file
+        filename : file,
     };
 
     this.transformCode(options);
@@ -82,12 +82,12 @@ beautifyJS.transformCode = function(options) {
         }
         options.errCode = 0;
 
-        g_option.bRenameLambda = options.bRenameLambda || true;
-        g_option.bRenameFunctionName = options.bRenameFunctionName || true;
-        g_option.bRenameFunctionParam = options.bRenameFunctionParam || true;
-        g_option.bRenameLocalVariable = options.bRenameLocalVariable || true;
-        g_option.bRenameRequire = options.bRenameRequire || true;
-        g_option.bRenameExport = options.bRenameExport || true;
+        g_option.bRenameLambda = options.bRenameLambda == undefined ? true : !!options.bRenameLambda;
+        g_option.bRenameFunctionName = options.bRenameFunctionName == undefined ? true : !!options.bRenameFunctionName;
+        g_option.bRenameFunctionParam = options.bRenameFunctionParam == undefined ? true : !!options.bRenameFunctionParam;
+        g_option.bRenameLocalVariable = options.bRenameLocalVariable == undefined ? true : !!options.bRenameLocalVariable;
+        g_option.bRenameRequire = options.bRenameRequire == undefined ? true : !!options.bRenameRequire;
+        g_option.bRenameExport = options.bRenameExport == undefined ? true : !!options.bRenameExport;
 
         var result = processCodeNtimes(code,[
             beautifier.visitor,renameRequire.visitor1

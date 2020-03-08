@@ -1,25 +1,31 @@
-var _LambdFun = function () {
+/// 1
+var rename = 1;
+var $_TES_b$ = 2;
+var $_TES_c$ = 3; ///2
+
+function test() {
+  if (rename) {
+    console.log("1");
+    bar();
+    return null;
+  }
+} ///3
+
+
+var _TES_Lambda_ = function () {
   console.log("aaa");
 };
 
-_LambdFun();
-
-var _LambdFun2 = function () {
-  console.log("aaa");
-};
-
-_LambdFun2(a, function () {
+_TES_Lambda_(rename, function () {
   console.log("bbb");
 
-  var _LambdFun3 = function () {
+  var _TES_1_Lambda_ = function () {
     console.log("ccc");
   };
 
-  _LambdFun3(a);
+  _TES_1_Lambda_(rename);
 });
 
-var _LambdFun4 = function () {};
+function rename() {}
 
-_LambdFun4(a, b, c);
-
-a(function () {});
+exports.rename = rename;

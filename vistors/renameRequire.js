@@ -212,9 +212,9 @@ function __getRenameVariableName(path,rawName,line) {
     do {
         var hex = Number(tryCnt).toString(16);
         var trySubFix = (tryCnt == 0 ? "" : ("_" + hex));
-        newName = "$_" + g_option.nameHash.toLocaleUpperCase() + "_" + rawName + trySubFix + "$";
+        newName = "$_" + g_option.nameHash + "_" + rawName + trySubFix + "$";
         tryCnt++;
-    } while(path.scope.hasBinding(newName));
+    } while(path.scope.hasBinding(newName) || g_option.renameMap[newName]);
     g_option.renameMap[newName] = true;
     return newName;
 }
@@ -228,10 +228,9 @@ function __getRenameFunctionParam(path,funName,index) {
     }
     do {
         var hex = Number(tryCnt).toString(16);
-        finalName = util.format('$_%s_%s_IN%s%s$',g_option.nameHash,prefix,(tryCnt != 0 ? ("_" + hex + "_")  : ""),index + 1);
-        finalName = finalName.toLocaleUpperCase();
+        finalName = util.format('$_%s_%s_in%s%s$',g_option.nameHash,prefix,(tryCnt != 0 ? ("_" + hex + "_")  : ""),index + 1);
         tryCnt++;
-    } while(path.scope.hasBinding(finalName));
+    } while(path.scope.hasBinding(finalName) || g_option.renameMap[finalName]);
 
     g_option.renameMap[finalName] = true;
     return finalName;

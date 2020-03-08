@@ -24,13 +24,13 @@ function myTransformApp(root) {
 
 function runCode(bTest) {
     if(!bTest) {
-        myTransformApp("/Applications/CocosCreator2.10.app/Contents/Resources/app/**/*.js")
+        myTransformApp("/Applications/CocosCreator.app/Contents/Resources/app/**/*.js")
     } else {
         beautifyJs.transformWithFile("./test/test2.js",false);
     }
 }
 
-runCode(true);
+runCode(false);
 
 
 /*transformCode("/Applications/CocosCreator2.09.app/Contents/Resources/app/editor/core/gulp-build.js",true);

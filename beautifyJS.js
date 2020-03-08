@@ -75,11 +75,12 @@ beautifyJS.transformCode = function(options) {
         console.log("transformCode begin" + fileName);
 
         g_option.currFileName = path.basename(fileName);
-        g_option.currFileName = getValidName(g_option.currFileName).toLocaleUpperCase();
+        g_option.currFileName = getValidName(g_option.currFileName);
         g_option.nameHash = g_option.currFileName;
         if(g_option.nameHash.length > 3) {
             g_option.nameHash = g_option.nameHash.substr(0,3);
         }
+        
         options.errCode = 0;
 
         g_option.bRenameLambda = options.bRenameLambda == undefined ? true : !!options.bRenameLambda;
@@ -89,6 +90,10 @@ beautifyJS.transformCode = function(options) {
         g_option.bRenameRequire = options.bRenameRequire == undefined ? true : !!options.bRenameRequire;
         g_option.bRenameExport = options.bRenameExport == undefined ? true : !!options.bRenameExport;
 
+        if(options.bClearState) {
+            g_option.renameMap = {}
+        }
+        
         var result = processCodeNtimes(code,[
             beautifier.visitor,renameRequire.visitor1
         ],[
